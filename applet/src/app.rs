@@ -5,9 +5,10 @@ use std::time::Duration;
 
 use chrono::{DateTime, Local, Utc};
 use cosmic::iced::platform_specific::shell::wayland::commands::popup::{destroy_popup, get_popup};
-use cosmic::iced::{window::Id, Alignment, Length, Limits, Subscription};
+use cosmic::iced::{futures, window::Id, Alignment, Length, Limits, Subscription};
 use cosmic::prelude::*;
 use cosmic::widget::{self, autosize};
+use futures::SinkExt;
 use quota_providers::{
     fetch_all, merge, worst_metric, ProviderStatus, QuotaSnapshot, QuotaWindow,
 };
@@ -126,8 +127,26 @@ impl cosmic::Application for AppModel {
         self.core.applet.popup_container(content).into()
     }
 
+    // iced's `time::every` does not tick in the applet shell, so refresh
+    // through a tokio interval on the runtime's executor instead.
     fn subscription(&self) -> Subscription<Self::Message> {
-        cosmic::iced::time::every(REFRESH_INTERVAL).map(|_| Message::Refresh)
+        Subscription::run(|| {
+            cosmic::iced::stream::channel(
+                4,
+                move |mut channel: futures::channel::mpsc::Sender<_>| async move {
+                    let mut interval = tokio::time::interval(REFRESH_INTERVAL);
+                    interval.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
+                    // First tick fires immediately; init already fetched.
+                    interval.tick().await;
+                    loop {
+                        interval.tick().await;
+                        if channel.send(Message::Refresh).await.is_err() {
+                            return;
+                        }
+                    }
+                },
+            )
+        })
     }
 
     fn update(&mut self, message: Self::Message) -> Task<cosmic::Action<Self::Message>> {
