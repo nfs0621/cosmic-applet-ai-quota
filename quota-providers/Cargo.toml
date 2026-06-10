@@ -1,0 +1,13 @@
+[package]
+name = "quota-providers"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Read local CLI OAuth credentials and fetch AI provider quota usage"
+
+[dependencies]
+chrono = "0.4"
+dirs = "5"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
+serde_json = "1"
+tokio = { version = "1", features = ["macros", "fs"] }

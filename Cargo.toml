@@ -1,0 +1,6 @@
+[workspace]
+resolver = "2"
+members = ["quota-providers", "applet"]
+
+[profile.release]
+lto = "thin"

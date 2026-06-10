@@ -1,0 +1,7 @@
+// SPDX-License-Identifier: MIT
+
+mod app;
+
+fn main() -> cosmic::iced::Result {
+    cosmic::applet::run::<app::AppModel>(())
+}

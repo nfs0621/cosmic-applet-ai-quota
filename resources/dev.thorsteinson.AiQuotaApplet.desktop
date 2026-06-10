@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=AI Quota
+Comment=Claude, Gemini and OpenAI subscription quota in the panel
+Type=Application
+Icon=dev.thorsteinson.AiQuotaApplet
+Exec=cosmic-applet-ai-quota
+Terminal=false
+Categories=COSMIC;
+Keywords=COSMIC;AI;Quota;Claude;Gemini;OpenAI;
+NoDisplay=true
+X-CosmicApplet=true
+X-CosmicHoverPopup=Auto
