@@ -1,0 +1,18 @@
+[package]
+name = "ai-quota-tray"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Cross-desktop system-tray indicator (StatusNotifierItem) for Claude / OpenAI Codex / Gemini subscription quota usage. Works in KDE Plasma, COSMIC, GNOME, XFCE."
+
+[[bin]]
+name = "ai-quota-tray"
+path = "src/main.rs"
+
+[dependencies]
+quota-providers = { path = "../quota-providers" }
+chrono = "0.4"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "sync"] }
+ksni = "0.3"
+fontdb = "0.18"
+fontdue = "0.9"
